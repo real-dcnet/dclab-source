@@ -1,0 +1,9 @@
+# Ignore certain extensions
+*.swp
+
+# Ignore generated configuration files
+config/mininet/*
+
+# Ignore IntelliJ files
+onos-app-dcnet.iml
+.idea/

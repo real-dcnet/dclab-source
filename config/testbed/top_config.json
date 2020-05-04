@@ -1,0 +1,30 @@
+{
+    "config": [
+        {
+            "lf_radix_down": 3, 
+            "ss_radix_down": 3,
+            "lf_radix_up": 2, 
+            "sp_radix_up": 2,
+            "sp_radix_down": 2,
+            "dc_radix_down": 2
+        }, 
+        {
+            "lf_radix_down": 3,
+            "ss_radix_down": 3,
+            "lf_radix_up": 2,
+            "sp_radix_up": 2,
+            "sp_radix_down": 2,
+            "dc_radix_down": 2
+        },
+        {
+            "lf_radix_down": 3,
+            "ss_radix_down": 2,
+            "lf_radix_up": 2,
+            "sp_radix_up": 1,
+            "sp_radix_down": 2,
+            "dc_radix_down": 2
+        }
+    ], 
+    "dc_count": 3,
+    "offset": 7.5
+}

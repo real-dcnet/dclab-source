@@ -163,6 +163,14 @@ public class DClab {
                                 }
                             }
                             if (!exitTwo) {
+                                for (DefaultEdge f : g.incomingEdgesOf(u)) {
+                                    if (e.dst().equals(g.getEdgeSource(f))) {
+                                        exitTwo = true;
+                                        break;
+                                    }
+                                }
+                            }
+                            if (!exitTwo) {
                                 linkAdminService.removeLink(e.link().src(), e.link().dst());
                             }
                         }

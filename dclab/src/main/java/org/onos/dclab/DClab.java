@@ -85,8 +85,14 @@ public class DClab {
     @Activate
     public void activate() {
         coreService.registerApplication("org.onosproject.dclab");
-        applicationAdminService.deactivate(applicationAdminService.getId("org.onosproject.lldpprovider"));
-        analyzeTopology();
+        try {
+            applicationAdminService.deactivate(applicationAdminService.getId("org.onosproject.lldpprovider"));
+            Thread.sleep(5000);
+            analyzeTopology();
+        }
+        catch (InterruptedException e){
+            applicationAdminService.activate(applicationAdminService.getId("org.onosproject.lldpprovider"));
+        }
         log.info("Started");
     }
 

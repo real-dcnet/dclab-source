@@ -51,7 +51,7 @@ public class DClab {
     private LinkAdminService linkAdminService;
 
     private static String configLoc =
-            System.getProperty("user.home") + "/dcnet-source/config/dclab/";
+            System.getProperty("user.home") + "/dclab-source/config/dclab/";
 
     public static class QueueEntry implements Comparable<QueueEntry> {
         private int key;

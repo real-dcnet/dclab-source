@@ -10,8 +10,10 @@ import org.jgrapht.GraphPath;
 import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
+import org.onosproject.app.ApplicationAdminService;
 import org.onosproject.core.ApplicationId;
 import org.onosproject.core.CoreService;
+import org.onosproject.net.ConnectPoint;
 import org.onosproject.net.device.DeviceAdminService;
 import org.onosproject.net.device.DeviceService;
 import org.onosproject.net.link.LinkAdminService;
@@ -50,6 +52,10 @@ public class DClab {
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
     private LinkAdminService linkAdminService;
 
+    /** Service used to activate and deactivate application. */
+    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
+    private ApplicationAdminService applicationAdminService;
+
     private static String configLoc =
             System.getProperty("user.home") + "/dclab-source/config/dclab/";
 
@@ -79,6 +85,7 @@ public class DClab {
     @Activate
     public void activate() {
         coreService.registerApplication("org.onosproject.dclab");
+        applicationAdminService.deactivate(applicationAdminService.getId("org.onosproject.lldpprovider"));
         analyzeTopology();
         log.info("Started");
     }
@@ -86,6 +93,7 @@ public class DClab {
     /** Allows application to be stopped by ONOS controller. */
     @Deactivate
     public void deactivate() {
+        applicationAdminService.activate(applicationAdminService.getId("org.onosproject.lldpprovider"));
         log.info("Stopped");
     }
 

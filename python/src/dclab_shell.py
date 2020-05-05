@@ -57,7 +57,7 @@ class DClabShell(Cmd):
 
     def do_load(self, inp):
         '''Load configuration from a specified file
-        Syntax: load file_name'''
+        Syntax: load <file_name>'''
         file = open(inp, "r")
         self.config = json.load(file)
 

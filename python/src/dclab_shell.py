@@ -42,8 +42,8 @@ class DClabShell(Cmd):
         if parsed[0] == "tree":
             self.config.append({"type": parsed[0],
                                 "depth": int(parsed[1]),
-                                "fanout": int(parsed[1]),
-                                "count": int(parsed[2])})
+                                "fanout": int(parsed[2]),
+                                "count": int(parsed[3])})
 
     def do_write(self, inp):
         '''Write current configuration to either a specified file or to default location

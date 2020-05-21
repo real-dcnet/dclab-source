@@ -66,6 +66,10 @@ class DClabShell(Cmd):
         os.system("/opt/onos/bin/onos-app 127.0.0.1 uninstall org.onosproject.dclab")
         os.system("/opt/onos/bin/onos-app 127.0.0.1 reinstall! ~/dcnet-source/dclab/target/onos-app-dclab-2.1.0.oar ")
 
+    def do_clear(self, inp):
+        '''Remove the current overlay from the network'''
+        os.system("/opt/onos/bin/onos-app 127.0.0.1 uninstall org.onosproject.dclab")
+
     def do_apply(self, inp):
         '''Write current configuration to default location, then run DClab'''
         self.do_write(None)

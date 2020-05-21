@@ -1,4 +1,5 @@
 from cmd import Cmd
+import time
 import json
 import os
 
@@ -64,6 +65,7 @@ class DClabShell(Cmd):
     def do_run(self, inp):
         '''Run DClab using currently saved configuration file'''
         os.system("/opt/onos/bin/onos-app 127.0.0.1 uninstall org.onosproject.dclab")
+        time.sleep(1)
         os.system("/opt/onos/bin/onos-app 127.0.0.1 reinstall! ~/dclab-source/dclab/target/onos-app-dclab-2.1.0.oar ")
 
     def do_clear(self, inp):

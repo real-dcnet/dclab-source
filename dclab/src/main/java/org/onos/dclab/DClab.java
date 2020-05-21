@@ -64,6 +64,10 @@ public class DClab {
     private static String configLoc =
             System.getProperty("user.home") + "/dclab-source/config/dclab/";
 
+    private static String switchConfigLoc =
+            System.getProperty("user.home") + "/dclab-source/config/mininet/";
+
+
     public static class QueueEntry implements Comparable<QueueEntry> {
         private int key;
         private int value;
@@ -126,7 +130,7 @@ public class DClab {
         try {
             /* Setup switch database by reading fields in switch config JSON */
             JsonArray configArray = Json.parse(new BufferedReader(
-                    new FileReader(configLoc + "switch_config.json"))
+                    new FileReader(switchConfigLoc + "switch_config.json"))
             ).asArray();
 
             for (JsonValue obj : configArray) {

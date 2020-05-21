@@ -565,7 +565,7 @@ public class DClab {
         /* Find shortest distance between all pairs of components */
         for (int i = 0; i < components.size() - 1; i++) {
             for (int j = i + 1; j < components.size(); j++) {
-                if (blacklist.get(i).contains(j)) {
+                if (minDist > 0 && blacklist.get(i).contains(j)) {
                     continue;
                 }
                 for (TopologyVertex v : components.get(i)) {

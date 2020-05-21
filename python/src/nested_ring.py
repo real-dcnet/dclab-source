@@ -72,10 +72,11 @@ class NestedRing(Topo):
             self.addSwitch(core_name, ip=ip_addr)
             switch_count += 1
             core_switches.append(core_name)
-            core_count += increment
-            switch_config.append({"name": core_name,
+            switch_config.append({"id": format(core_count, "x"),
+                                  "name": core_name,
                                   "latitude": 3 + math.sin((2 * c * math.pi) / size),
                                   "longitude": math.cos((2 * c * math.pi) / size)})
+            core_count += increment
 
         for e in range(size):
             edge_name = "e" + str(edge_count)
@@ -84,10 +85,11 @@ class NestedRing(Topo):
             self.addSwitch(edge_name, ip=ip_addr)
             switch_count += 1
             edge_switches.append(edge_name)
-            edge_count += increment
-            switch_config.append({"name": edge_name,
+            switch_config.append({"id": format(edge_count, "x"),
+                                  "name": edge_name,
                                   "latitude": math.sin((2 * e * math.pi) / size),
                                   "longitude": math.cos((2 * e * math.pi) / size)})
+            edge_count += increment
 
             for f in range(fanout):
                 host_name = "h" + str(host_count)

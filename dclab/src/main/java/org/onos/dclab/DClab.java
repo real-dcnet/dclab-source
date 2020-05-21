@@ -188,7 +188,7 @@ public class DClab {
 
             cfg.name(entry.getName());
             cfg.latitude(40.0 * entry.getLatitude());
-            cfg.longitude(25.0 * entry.getLongitude());
+            cfg.longitude(40.0 * entry.getLongitude());
             cfg.apply();
         }
     }

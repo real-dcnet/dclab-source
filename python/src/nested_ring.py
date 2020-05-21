@@ -74,8 +74,8 @@ class NestedRing(Topo):
             core_switches.append(core_name)
             switch_config.append({"id": format(core_count, "x"),
                                   "name": core_name,
-                                  "latitude": 3 + math.sin((2 * c * math.pi) / size),
-                                  "longitude": math.cos((2 * c * math.pi) / size)})
+                                  "latitude": math.sin((2 * c * math.pi) / size),
+                                  "longitude": math.cos((2 * c * math.pi) / size) - 1.5})
             core_count += increment
 
         for e in range(size):
@@ -88,7 +88,7 @@ class NestedRing(Topo):
             switch_config.append({"id": format(edge_count, "x"),
                                   "name": edge_name,
                                   "latitude": math.sin((2 * e * math.pi) / size),
-                                  "longitude": math.cos((2 * e * math.pi) / size)})
+                                  "longitude": math.cos((2 * e * math.pi) / size) + 1.5})
             edge_count += increment
 
             for f in range(fanout):

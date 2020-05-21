@@ -12,6 +12,9 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 import org.onosproject.app.ApplicationAdminService;
 import org.onosproject.core.CoreService;
+import org.onosproject.net.Device;
+import org.onosproject.net.config.NetworkConfigService;
+import org.onosproject.net.config.basics.BasicDeviceConfig;
 import org.onosproject.net.device.DeviceAdminService;
 import org.onosproject.net.device.DeviceService;
 import org.onosproject.net.link.LinkAdminService;
@@ -41,6 +44,10 @@ public class DClab {
     /** Service used to manage flow rules installed on switches. */
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
     private TopologyService topologyService;
+
+    /** Service used to manage flow rules installed on switches. */
+    @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
+    private NetworkConfigService networkService;
 
     /** Service used to manage flow rules installed on switches. */
     @Reference(cardinality = ReferenceCardinality.MANDATORY_UNARY)
@@ -79,15 +86,75 @@ public class DClab {
         }
     }
 
+    /** Holds information about switches parsed from JSON. */
+    private static final class SwitchEntry {
+        /** Human readable name for the switch. */
+        private String name;
+
+        /** Physical location of switch in topology representation. */
+        private double latitude;
+        private double longitude;
+
+        private SwitchEntry(final String switchName,
+                            final double latitude,
+                            final double longitude) {
+            this.name = switchName;
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
+
+        private String getName() {
+            return this.name;
+        }
+
+        private double getLatitude() {
+            return this.latitude;
+        }
+
+        private double getLongitude() {
+            return this.longitude;
+        }
+    }
+
+    /** Maps Chassis ID to a switch entry. */
+    private Map<String, SwitchEntry> switchDB = new TreeMap<>();
+
+    /** Initialize structure needed to store and access location information for switches in network */
+    private void init() {
+        switchDB = new TreeMap<>();
+
+        try {
+            /* Setup switch database by reading fields in switch config JSON */
+            JsonArray configArray = Json.parse(new BufferedReader(
+                    new FileReader(configLoc + "switch_config.json"))
+            ).asArray();
+
+            for (JsonValue obj : configArray) {
+                JsonObject config = obj.asObject();
+                SwitchEntry entry = new SwitchEntry(
+                        config.get("name").asString(),
+                        config.get("latitude").asDouble(),
+                        config.get("longitude").asDouble());
+                switchDB.put(config.get("id").asString(), entry);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /** Allows application to be started by ONOS controller. */
     @Activate
     public void activate() {
+        init();
         coreService.registerApplication("org.onosproject.dclab");
+        for (Device d : deviceService.getAvailableDevices()) {
+            setLocation(d);
+        }
         try {
             /* Deactivate LLDP Provider to prevent interference with DClab */
             applicationAdminService.deactivate(applicationAdminService.getId("org.onosproject.lldpprovider"));
             Thread.sleep(5000);
-
             analyzeTopology();
         }
         catch (InterruptedException e){
@@ -102,6 +169,24 @@ public class DClab {
         /* Reactivate LLDP Provider so that links removed by DClab can be restored */
         applicationAdminService.activate(applicationAdminService.getId("org.onosproject.lldpprovider"));
         log.info("Stopped");
+    }
+
+    /**
+     * Register location information for a connected device to ONOS so that it can be displayed in gui
+     * @param device    Switch that has been connected
+     */
+    private synchronized void setLocation(final Device device) {
+        String id = device.chassisId().toString();
+        log.info("Chassis " + id + " connected");
+        if (switchDB.containsKey(id)) {
+            SwitchEntry entry = switchDB.get(id);
+            BasicDeviceConfig cfg = networkService.addConfig(device.id(), BasicDeviceConfig.class);
+
+            cfg.name(entry.getName());
+            cfg.latitude(40.0 * entry.getLatitude());
+            cfg.longitude(25.0 * entry.getLongitude());
+            cfg.apply();
+        }
     }
 
     /** Main logic for DClab that parses a configuration file and applies an overlay */

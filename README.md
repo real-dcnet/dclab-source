@@ -5,7 +5,7 @@ The following commands install all dependencies required to run Mininet and the 
 sudo apt install mininet
 sudo apt install default-jdk
 sudo apt install maven
-wget http://repo1.maven.org/maven2/org/onosproject/onos-releases/2.1.0/onos-2.1.0.tar.gz
+wget https://repo1.maven.org/maven2/org/onosproject/onos-releases/2.1.0/onos-2.1.0.tar.gz
 wget https://sourceforge.net/projects/jgrapht/files/JGraphT/Version%201.4.0/jgrapht-1.4.0.tar.gz
 tar -xvf onos-2.1.0.tar.gz
 tar -xvf jgrapht-1.4.0.tar.gz

@@ -66,7 +66,8 @@ Which installs the DClab application into the ONOS controller and activates it. 
 Since ONOS needs access to the JARs for JGraphT in order to use it during runtime, use the following commands to move the JARs into a directory which ONOS can access. Note that guava JARs are removed since they conflict with some of ONOS's own packages
 ```
 cp jgrapht-1.4.0/lib/*.jar onos-2.1.0/apache-karaf-4.2.3/deploy
-rm *guava* onos-2.1.8/apache-karaf-4.2.3/deploy
+cd onos-2.1.8/apache-karaf-4.2.3/deploy
+rm *guava*
 ```
 
 ## Using the DClab CLI

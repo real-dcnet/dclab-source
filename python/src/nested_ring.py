@@ -27,7 +27,7 @@ def parseOptions():
                         help="Number of switches in each ring")
     parser.add_argument("--hops", type=int, nargs="+",
                         help="List of hop lengths within ring")
-    parser.add_argument("--fanout", type=int, nargs="+",
+    parser.add_argument("--fanout", type=int,
                         help="Number of hosts per edge switch")
 
     args = parser.parse_args()

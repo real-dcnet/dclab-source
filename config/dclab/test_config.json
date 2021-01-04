@@ -1,8 +1,7 @@
 [
     {
-        "type": "tree",
-        "depth": 3,
-        "fanout": 2,
-        "count": 1
+        "count": 1, 
+        "length": 20, 
+        "type": "linear"
     }
 ]

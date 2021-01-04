@@ -22,6 +22,7 @@ import org.onosproject.net.topology.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.*;
 import java.io.*;
 import java.util.*;
 
@@ -159,7 +160,12 @@ public class DClab {
             /* Deactivate LLDP Provider to prevent interference with DClab */
             applicationAdminService.deactivate(applicationAdminService.getId("org.onosproject.lldpprovider"));
             Thread.sleep(5000);
+            long start = System.currentTimeMillis();
             analyzeTopology();
+            long end = System.currentTimeMillis();
+            float sec = (end -start);
+            String sec_str = Float.toString(sec);
+            log.info("Topology overlay finished in " + sec_str + " milliseconds");
         }
         catch (InterruptedException e){
             applicationAdminService.activate(applicationAdminService.getId("org.onosproject.lldpprovider"));

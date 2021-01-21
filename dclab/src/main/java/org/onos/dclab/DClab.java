@@ -4,6 +4,10 @@ import com.eclipsesource.json.Json;
 import com.eclipsesource.json.JsonArray;
 import com.eclipsesource.json.JsonObject;
 import com.eclipsesource.json.JsonValue;
+import com.google.common.net.InetAddresses;
+import kong.unirest.HttpResponse;
+import kong.unirest.JsonNode;
+import kong.unirest.Unirest;
 import org.apache.felix.scr.annotations.*;
 import org.jgrapht.Graph;
 import org.jgrapht.GraphPath;
@@ -23,7 +27,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
+
+import java.text.MessageFormat;
+
+import com.google.gson.Gson;
 
 /**
  * ONOS App implementing DCLab forwarding scheme.
@@ -67,6 +76,7 @@ public class DClab {
     private static String switchConfigLoc =
             System.getProperty("user.home") + "/dclab-source/config/mininet/";
 
+    private static boolean useDriver = false;
 
     public static class QueueEntry implements Comparable<QueueEntry> {
         private int key;
@@ -151,6 +161,15 @@ public class DClab {
     @Activate
     public void activate() {
         init();
+
+        if (useDriver){
+            try {
+                enableAllVlansIPRange("10.0.1.1", "10.0.1.99");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         coreService.registerApplication("org.onosproject.dclab");
         for (Device d : deviceService.getAvailableDevices()) {
             setLocation(d);
@@ -262,6 +281,181 @@ public class DClab {
         }
     }
 
+
+    /**
+     * Retrieves an authentication token for use with other API call-wrapped methods
+     * @param IPaddress     IP Address of the device for which an authentication token is required
+     * @return              String which is the authentication token
+     * @throws IOException  This exception is thrown in case the API call fails
+     */
+    private static String authSwitch(String IPaddress) throws IOException{
+        String authKey = "";
+        Object[] authURLArgs = new Object[]{IPaddress};
+        String authURL = MessageFormat.format("http://{0}/cgi-bin/luci/rpc/auth", authURLArgs);
+        List<String> jsonDataArgs = new ArrayList<String>();
+
+        try {
+            File file = new File("credentials.txt");
+            Scanner scanner = new Scanner(file);
+            for (int i = 0; i < 2; i++) {
+                jsonDataArgs.add(scanner.nextLine());
+            }
+        } catch (FileNotFoundException e) {
+            log.error("Could not find a file named 'credentials.txt'. Please create such a newline-delimited file containing username and password at " + System.getProperty("user.dir"));
+            e.printStackTrace();
+        }
+        Map<String, Object> map = new HashMap<>();
+        map.put("params", jsonDataArgs.toArray());
+        map.put("jsonrpc", "2.0");
+        map.put("id", 1);
+        map.put("method", "login");
+        Gson gson = new Gson();
+        HttpResponse<JsonNode> jsonResponse = Unirest.post(authURL).body(gson.toJson(map)).asJson();
+        if (jsonResponse.getStatus() == 200) {
+            try {
+                authKey = jsonResponse.getBody().getObject().getString("result");
+            } catch (Exception e) {
+                System.out.println(jsonResponse.getBody());
+            }
+        } else {
+            throw new IOException("HTTP STATUS CODE:" + jsonResponse.getStatus());
+        }
+
+        return authKey;
+    }
+
+    /**
+     * Enable all the VLANs on a specific device
+     * @param authKey       Authentication key received from authSwitch method
+     * @param IPaddress     IP address of the device for which all the VLANs must be enabled
+     * @throws IOException  This exception is thrown in case the API call fails
+     */
+    private static void enableAllVlans(String authKey, String IPaddress) throws IOException {
+        Object[] URLArgs = new Object[]{IPaddress};
+        String URL = MessageFormat.format("http://{0}/cgi-bin/luci/rpc/uci", URLArgs);
+
+        final int NUM_OF_VLANS = 5;
+        for (int i = 0; i < NUM_OF_VLANS; i++) {
+            Object[] data = new Object[]{Integer.toString(i)};
+            String[] jsonDataArgs = {MessageFormat.format("network.@switch_vlan[{0}].ports={0} 6t", data)};
+            Map<String, Object> map = new HashMap<>();
+            map.put("params", jsonDataArgs);
+            map.put("jsonrpc", "2.0");
+            map.put("id", 1);
+            map.put("method", "set");
+            Gson gson = new Gson();
+            HttpResponse<JsonNode> jsonResponse = Unirest.post(URL).body(gson.toJson(map)).queryString("auth", authKey).asJson();
+            if (jsonResponse.getStatus() == 200) {
+                log.info("Enabling" + IPaddress);
+//                System.out.println(jsonResponse.getBody());
+                String value = jsonResponse.getBody().getObject().getString("result");
+                if (!Boolean.parseBoolean(value)) {
+                    throw new IOException("REST API call failed");
+                }
+            } else {
+                throw new IOException("HTTP STATUS CODE:" + jsonResponse.getStatus());
+
+            }
+
+        }
+    }
+
+    /**
+     * Disable all the VLANs on a specific device
+     * @param authKey       Authentication key received from authSwitch method
+     * @param IPaddress     IP address of the device for which all the VLANs must be disabled
+     * @throws IOException  This exception is thrown in case the API call fails
+     */
+    private static void disableAllVlans(String authKey, String IPaddress) throws IOException {
+        Object[] URLArgs = new Object[]{IPaddress};
+        String URL = MessageFormat.format("http://{0}/cgi-bin/luci/rpc/uci", URLArgs);
+
+        final int NUM_OF_VLANS = 5;
+        for (int i = 0; i < NUM_OF_VLANS; i++) {
+            Object[] data = new Object[]{Integer.toString(i)};
+            String[] jsonDataArgs = {MessageFormat.format("network.@switch_vlan[{0}].ports=", data)};
+            Map<String, Object> map = new HashMap<>();
+            map.put("params", jsonDataArgs);
+            map.put("jsonrpc", "2.0");
+            map.put("id", 1);
+            map.put("method", "set");
+            Gson gson = new Gson();
+            HttpResponse<JsonNode> jsonResponse = Unirest.post(URL).body(gson.toJson(map)).queryString("auth", authKey).asJson();
+            if (jsonResponse.getStatus() == 200) {
+                log.info("Disabling " + IPaddress);
+//                System.out.println(jsonResponse.getBody());
+                String value = jsonResponse.getBody().getObject().getString("result");
+                if (!Boolean.parseBoolean(value)) {
+                    throw new IOException("REST API call failed");
+                }
+
+            } else {
+                throw new IOException("HTTP STATUS CODE:" + jsonResponse.getStatus());
+
+            }
+
+        }
+    }
+
+    /**
+     * Convenience method to call enableAllVlans method on a range of IP addresses. Handles IP address increment logic properly.
+     * @param IPAddressRangeStart   Inclusive start IP address in the range
+     * @param IPAddressRangeEnd     Inclusive end IP address in the range
+     * @throws IOException          This exception is thrown in case the API call fails
+     */
+    private static void enableAllVlansIPRange(String IPAddressRangeStart, String IPAddressRangeEnd) throws IOException {
+        InetAddress start = InetAddresses.forString(IPAddressRangeStart);
+        InetAddress end = InetAddresses.forString(IPAddressRangeEnd);
+
+
+        do {
+            String ipaddr = start.toString().split("/")[1];
+            String authKey = authSwitch(ipaddr);
+            log.info("Enabling " + ipaddr);
+            enableAllVlans(authKey, ipaddr);
+            commitAndApplyChanges(authKey, ipaddr);
+            start = InetAddresses.increment(start);
+        } while (!start.toString().equals(end.toString()));
+
+    }
+
+
+    /**
+     * Calls 'commit' and 'apply' endpoints to persist changes.
+     * @param authKey       Authentication key received from authSwitch method
+     * @param IPaddress     IP address of the device for which all changes must be saved
+     * @throws IOException  This exception is thrown in case the API call fails
+     */
+    private static void commitAndApplyChanges(String authKey, String IPaddress) throws IOException {
+        String[] methods = {"commit", "apply"};
+
+        Object[] URLArgs = new Object[]{IPaddress};
+        String URL = MessageFormat.format("http://{0}/cgi-bin/luci/rpc/uci", URLArgs);
+        String[] jsonDataArgs = {"network"};
+
+        for (String method : methods) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("params", jsonDataArgs);
+            map.put("jsonrpc", "2.0");
+            map.put("id", 1);
+            map.put("method", method);
+            Gson gson = new Gson();
+            HttpResponse<JsonNode> jsonResponse = Unirest.post(URL).body(gson.toJson(map)).queryString("auth", authKey).asJson();
+            if (jsonResponse.getStatus() == 200) {
+
+                log.info("committing changes" + method);
+//                System.out.println(jsonResponse.getBody());
+                String value = jsonResponse.getBody().getObject().getString("result");
+                if (!Boolean.parseBoolean(value)) {
+                    throw new IOException("REST API call failed");
+
+                }
+            } else {
+                throw new IOException("HTTP STATUS CODE:" + jsonResponse.getStatus());
+            }
+        }
+
+    }
     /**
      * Disables links in the topologies that aren't in any of the overlaid topologies
      * @param graphOld  Graph representing the previously active network topology
@@ -307,7 +501,21 @@ public class DClab {
             }
             if (!exit) {
                 /* Disable all edges for nodes not in overlaid network */
-                linkAdminService.removeLinks(v.deviceId());
+                if (useDriver){
+                    Device d = deviceService.getDevice(v.deviceId());
+                    String ipaddr = d.annotations().value("MANAGEMENT_ADDRESS");
+                    try {
+                        String authKey = authSwitch(ipaddr);
+                        disableAllVlans(authKey, ipaddr);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                else{
+                    linkAdminService.removeLinks(v.deviceId());
+                }
+
             }
         }
     }

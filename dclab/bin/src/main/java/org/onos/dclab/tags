@@ -1,0 +1,53 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_OUTPUT_FILESEP	slash	/slash or backslash/
+!_TAG_OUTPUT_MODE	u-ctags	/u-ctags or e-ctags/
+!_TAG_PROGRAM_AUTHOR	Universal Ctags Team	//
+!_TAG_PROGRAM_NAME	Universal Ctags	/Derived from Exuberant Ctags/
+!_TAG_PROGRAM_URL	https://ctags.io/	/official site/
+!_TAG_PROGRAM_VERSION	0.0.0	/fc524251/
+DClab	DClab.java	/^public class DClab {$/;"	c
+QueueEntry	DClab.java	/^        public QueueEntry(int key, int value) {$/;"	m	class:DClab.QueueEntry
+QueueEntry	DClab.java	/^    public static class QueueEntry implements Comparable<QueueEntry> {$/;"	c	class:DClab
+SwitchEntry	DClab.java	/^        private SwitchEntry(final String switchName,$/;"	m	class:DClab.SwitchEntry	file:
+SwitchEntry	DClab.java	/^    private static final class SwitchEntry {$/;"	c	class:DClab
+activate	DClab.java	/^    public void activate() {$/;"	m	class:DClab
+analyzeTopology	DClab.java	/^    private void analyzeTopology() {$/;"	m	class:DClab	file:
+applicationAdminService	DClab.java	/^    private ApplicationAdminService applicationAdminService;$/;"	f	class:DClab	file:
+calculateComponentDistances	DClab.java	/^    private void calculateComponentDistances(Graph<TopologyVertex, DefaultEdge> partitions,$/;"	m	class:DClab	file:
+compareTo	DClab.java	/^        public int compareTo(QueueEntry entry) {$/;"	m	class:DClab.QueueEntry
+configLoc	DClab.java	/^    private static String configLoc =$/;"	f	class:DClab	file:
+copyGraph	DClab.java	/^    private Graph<TopologyVertex, DefaultEdge> copyGraph(Graph<TopologyVertex, DefaultEdge> grap/;"	m	class:DClab	file:
+coreService	DClab.java	/^    private CoreService coreService;$/;"	f	class:DClab	file:
+createFinalComponent	DClab.java	/^    private void createFinalComponent(int minI, int minJ, Graph<TopologyVertex, DefaultEdge> par/;"	m	class:DClab	file:
+createLinearTopos	DClab.java	/^    private List<Graph<TopologyVertex, DefaultEdge>> createLinearTopos(Graph<TopologyVertex, Def/;"	m	class:DClab	file:
+createStarTopos	DClab.java	/^    private List<Graph<TopologyVertex, DefaultEdge>> createStarTopos(Graph<TopologyVertex, Defau/;"	m	class:DClab	file:
+createTreeTopos	DClab.java	/^    private List<Graph<TopologyVertex, DefaultEdge>> createTreeTopos(Graph<TopologyVertex, Defau/;"	m	class:DClab	file:
+deactivate	DClab.java	/^    public void deactivate() {$/;"	m	class:DClab
+deviceAdminService	DClab.java	/^    private DeviceAdminService deviceAdminService;$/;"	f	class:DClab	file:
+deviceService	DClab.java	/^    private DeviceService deviceService;$/;"	f	class:DClab	file:
+disablePorts	DClab.java	/^    private void disablePorts(TopologyGraph graphOld, List<Graph<TopologyVertex, DefaultEdge>> g/;"	m	class:DClab	file:
+getKey	DClab.java	/^        private int getKey() {$/;"	m	class:DClab.QueueEntry	file:
+getLatitude	DClab.java	/^        private double getLatitude() {$/;"	m	class:DClab.SwitchEntry	file:
+getLongitude	DClab.java	/^        private double getLongitude() {$/;"	m	class:DClab.SwitchEntry	file:
+getName	DClab.java	/^        private String getName() {$/;"	m	class:DClab.SwitchEntry	file:
+getValue	DClab.java	/^        private int getValue() {$/;"	m	class:DClab.QueueEntry	file:
+init	DClab.java	/^    private void init() {$/;"	m	class:DClab	file:
+initializeComponents	DClab.java	/^    private void initializeComponents(Graph<TopologyVertex, DefaultEdge> graph, List<List<Topolo/;"	m	class:DClab	file:
+key	DClab.java	/^        private int key;$/;"	f	class:DClab.QueueEntry	file:
+latitude	DClab.java	/^        private double latitude;$/;"	f	class:DClab.SwitchEntry	file:
+linkAdminService	DClab.java	/^    private LinkAdminService linkAdminService;$/;"	f	class:DClab	file:
+log	DClab.java	/^    private static Logger log = LoggerFactory.getLogger(DClab.class);$/;"	f	class:DClab	file:
+longitude	DClab.java	/^        private double longitude;$/;"	f	class:DClab.SwitchEntry	file:
+mergeComponents	DClab.java	/^    private void mergeComponents(int minI, int minJ, GraphPath minPath, Map<TopologyVertex, Bool/;"	m	class:DClab	file:
+name	DClab.java	/^        private String name;$/;"	f	class:DClab.SwitchEntry	file:
+networkService	DClab.java	/^    private NetworkConfigService networkService;$/;"	f	class:DClab	file:
+org.onos.dclab	DClab.java	/^package org.onos.dclab;$/;"	p
+removeSubTopology	DClab.java	/^    private void removeSubTopology(Graph<TopologyVertex, DefaultEdge> graph, List<Graph<Topology/;"	m	class:DClab	file:
+setLocation	DClab.java	/^    private synchronized void setLocation(final Device device) {$/;"	m	class:DClab	file:
+switchConfigLoc	DClab.java	/^    private static String switchConfigLoc =$/;"	f	class:DClab	file:
+switchDB	DClab.java	/^    private Map<String, SwitchEntry> switchDB = new TreeMap<>();$/;"	f	class:DClab	file:
+topologyService	DClab.java	/^    private TopologyService topologyService;$/;"	f	class:DClab	file:
+trimEdges	DClab.java	/^    private void trimEdges(Graph<TopologyVertex, DefaultEdge> graph, List<TopologyVertex> nodes,/;"	m	class:DClab	file:
+updateComponents	DClab.java	/^    private void updateComponents(List<List<TopologyVertex>> targetComp, List<List<DefaultEdge>>/;"	m	class:DClab	file:
+value	DClab.java	/^        private int value;$/;"	f	class:DClab.QueueEntry	file:
